@@ -1316,11 +1316,15 @@ def export_analytics_pdf(request):
     html_string = render_to_string('admin_portal/analytics_pdf_template.html', context)
     
     # Use xhtml2pdf instead of weasyprint (no system dependencies required)
-    from xhtml2pdf import pisa
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; filename="MCM_Analytics_Report.pdf"'
-    pisa.CreatePDF(html_string, dest=response)
-    return response
+    try:
+        from xhtml2pdf import pisa
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename="MCM_Analytics_Report.pdf"'
+        pisa.CreatePDF(html_string, dest=response)
+        return response
+    except ImportError:
+        # Fallback: return HTML if PDF generation fails
+        return HttpResponse(html_string, content_type='text/html')
 
 
 #---------------------------------

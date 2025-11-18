@@ -1,0 +1,1 @@
+psql -U mcm_user -d mcm_db < mcm_db_clean_baseline.sql

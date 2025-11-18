@@ -1,3 +1,3 @@
-web: python manage.py collectstatic --noinput; gunicorn mcm_admission.wsgi --bind 0.0.0.0:$PORT --log-file -
+web: bash start.sh
 worker: celery -A mcm_admission worker -l info
 

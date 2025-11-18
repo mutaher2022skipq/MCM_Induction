@@ -16,7 +16,6 @@ import json
 from django.db.models import Count
 from io import BytesIO
 from django.templatetags.static import static
-from weasyprint import HTML
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 import logging
@@ -1315,10 +1314,12 @@ def export_analytics_pdf(request):
     }
 
     html_string = render_to_string('admin_portal/analytics_pdf_template.html', context)
-    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
-
-    response = HttpResponse(pdf_file, content_type='application/pdf')
+    
+    # Use xhtml2pdf instead of weasyprint (no system dependencies required)
+    from xhtml2pdf import pisa
+    response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="MCM_Analytics_Report.pdf"'
+    pisa.CreatePDF(html_string, dest=response)
     return response
 
 
